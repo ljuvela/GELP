@@ -1,0 +1,14 @@
+name: gelp-cpu
+channels:
+  - conda-forge
+dependencies:
+  - python=3.7
+  - numba=0.48
+  - librosa
+  - pysoundfile
+  - numpy
+  - scipy
+  - pip
+  - pip:
+    - tensorflow==1.13.1
+    

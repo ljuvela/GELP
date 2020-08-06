@@ -1,0 +1,84 @@
+{
+
+    "run_id" : 1,
+
+    "data" : {
+        "data_dir" : "../../DATA/nancy16",
+        "train_list" : "nancy_train.txt",
+        "valid_list" : "nancy_valid.txt",
+    
+        "audio_dir" : "data/wavs",
+        "audio_ext": ".wav",
+        "audio_dim" : 1,
+    
+        "sample_rate": 16000,
+        "num_mels": 80,
+        "dct_coefs": null,
+        "num_freq": 1025,
+        "frame_length_ms": 25.0,
+        "frame_shift_ms": 5.0,
+        "preemphasis": 0.97,
+        "min_level_db": -100,
+        "ref_level_db": 20,
+        "ar_filter_order": 24
+    },
+
+    "model": {
+        "residual_channels": 64,
+        "postnet_channels": 64,
+        "cond_embed_dim": 64,
+        "dilations": [1, 2, 4, 8, 16, 32, 64, 128,
+                      1, 2, 4, 8, 16, 32, 64, 128,
+                      1, 2, 4, 8, 16, 32, 64, 128],
+        "filter_width" : 5,
+        "causal" : false,
+        "add_noise_at_each_layer": false
+    },
+
+    "cond_model" : {
+        "residual_channels" : 64,
+        "postnet_channels" : 64,
+        "dilations" : [1, 2, 4, 8, 1, 2, 4, 8],
+        "filter_width": 5,
+        "n_hidden": [64]
+    },
+
+    "discriminator" : {
+        "dilations" : [1, 2, 4, 8, 16, 32, 64,
+                       1, 2, 4, 8, 16, 32, 64],
+        "postnet_channels" : 64,
+        "residual_channels" : 64,
+        "filter_width" : 5                       
+    },
+
+    "training" : {
+
+        "num_epochs" : 100,
+        "max_iters" : 100000,
+
+        "adam_lr" : 1e-4,
+        "adam_beta1" : 0.9,
+        "adam_beta2" : 0.999,
+
+        "min_samples" : 16000,
+        "max_samples" : 16000,
+
+        "stft_loss_weight" : 10.0,
+        "gan_loss_weight" : 1.0,
+        "GP_loss_weight" : 10.0,
+        "R1_loss_weight" : 1.0,
+
+        "stft_loss_domain" : "wave",
+        "gan_loss_domain" : "wave",
+        "stft_perceptual_loss" : false,
+        "stft_loss_in_db" : false,
+        "stft_loss_cancel_pre_emph" : false,
+
+        "gan_loss_type" : "wgan",
+
+        "summary_interval" : 100,
+        "audio_snapshot_interval" : 1000,
+        "model_save_interval" : 10000
+        
+    }
+}

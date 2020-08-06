@@ -1,0 +1,15 @@
+name: gelp-gpu
+channels:
+  - conda-forge
+dependencies:
+  - python=3.7
+  - cudatoolkit-dev=10.0
+  - numba=0.48
+  - librosa
+  - pysoundfile
+  - numpy
+  - scipy
+  - pip
+  - pip:
+    tensorflow-gpu==1.13.1
+    
