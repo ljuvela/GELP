@@ -166,7 +166,7 @@ def copy_synthesis(args):
     model_path = os.path.join(run_root, 'model')
     syn_path = os.path.join(run_root, 'syn')
     exc_path = os.path.join(run_root, 'exc')
-  
+
     if not os.path.isdir(syn_path): 
         os.makedirs(syn_path) 
     if not os.path.isdir(exc_path): 

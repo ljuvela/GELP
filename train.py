@@ -29,8 +29,16 @@ from data_provider import NumpyDataProvider
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=str,
-                        default="./config/config_gan_nancy_multiscale.json")
+                        default="./config/config.json")
+    parser.add_argument("--initial_model", type=str,
+                        default="./sessions/42/model/model")
+    parser.add_argument("--suppress_warnings", action='store_true')
     args = parser.parse_args()
+
+    # suppress tensorflow warnings related to 1.X to 2.Y transition 
+    if args.suppress_warnings:
+        tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
+
     return args
 
 
@@ -44,8 +52,6 @@ def train_model(cfg, config_file):
 
     args = get_args()
     cfg = get_config(args.config)
-
-    tf.reset_default_graph()
 
     run_id = cfg['run_id']
 
@@ -61,17 +67,19 @@ def train_model(cfg, config_file):
     num_freq = cfg['data']['num_freq']
     nfft = 2 * (num_freq - 1)
     sample_rate = cfg['data']['sample_rate']
-    frame_step = cfg['data']['frame_shift']
-    frame_length = cfg['data']['frame_length']
+    frame_shift_ms = cfg['data']['frame_shift_ms']
+    frame_length_ms = cfg['data']['frame_length_ms']
+    frame_step = int(frame_shift_ms / 1000 * sample_rate)
+    frame_length = int(frame_length_ms / 1000 * sample_rate)
+
     num_mels = cfg['data']['num_mels']
     pre_emph_coef = cfg['data']['preemphasis']
 
     mel_max_freq = cfg['data'].get('mel_max_freq')
-    mel_clip = False
+    mel_clip = True
 
     cond_dim = num_mels
     audio_dim = cfg['data']['audio_dim']
-
 
     # data provider
     train_list = os.path.join(cfg['data']['data_dir'], cfg['data']['train_list'])
@@ -307,9 +315,7 @@ def train_model(cfg, config_file):
 
         iter_ind = 0
         for epoch in range(epoch_start, cfg['training']['num_epochs']):
-
             for x_np in dataprovider:
-
                 # cut to a multiple of frame step
                 n_samples = frame_step * (x_np.shape[0] // frame_step)
                 x_np = x_np[:n_samples]
@@ -346,8 +352,8 @@ def train_model(cfg, config_file):
 
                 # save model
                 save_interval = cfg['training']['model_save_interval']
-                if iter_ind % save_interval == save_interval-1:
-                    saver.save(sess, os.path.join(model_path, "model{}.ckpt".format(iter_total)))
+                if iter_ind % save_interval == 0:
+                    saver.save(sess, os.path.join(model_path, "model_iter{}.ckpt".format(iter_total)))
                     np.savez(training_status_file, iter_total=iter_total, epoch=epoch)
 
                 iter_ind += 1

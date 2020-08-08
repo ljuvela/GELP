@@ -3,11 +3,11 @@
     "run_id" : 1,
 
     "data" : {
-        "data_dir" : "../../DATA/nancy16",
-        "train_list" : "nancy_train.txt",
-        "valid_list" : "nancy_valid.txt",
+        "data_dir" : "demo_data",
+        "train_list" : "train_list_demo.txt",
+        "valid_list" : null,
     
-        "audio_dir" : "data/wavs",
+        "audio_dir" : "wav",
         "audio_ext": ".wav",
         "audio_dim" : 1,
     
@@ -54,7 +54,7 @@
     "training" : {
 
         "num_epochs" : 100,
-        "max_iters" : 100000,
+        "max_iters" : 1,
 
         "adam_lr" : 1e-4,
         "adam_beta1" : 0.9,
