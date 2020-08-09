@@ -292,8 +292,6 @@ def train_model(cfg, config_file):
             beta1=adam_beta1,
             beta2=adam_beta2).minimize(D_loss_total, var_list=theta_d)
 
-    import ipdb; ipdb.set_trace()
-
     # restore training status (optional)
     training_status_file = os.path.join(model_path, "status.npz")
     if os.path.isfile(training_status_file):
@@ -323,14 +321,16 @@ def train_model(cfg, config_file):
 
         summary_writer = tf.summary.FileWriter(logs_path, graph=tf.get_default_graph())
         saver = tf.train.Saver()
-        import ipdb; ipdb.set_trace()
         if restore_custom_checkpoint:
             saver.restore(sess, args.initial_model)
         elif restore_latest_checkpoint:
             saver.restore(sess, tf.train.latest_checkpoint(model_path))
 
         iter_ind = 0
+        finished_training = False
         for epoch in range(epoch_start, cfg['training']['num_epochs']):
+            if finished_training:
+                break
             for x_np in dataprovider:
                 # cut to a multiple of frame step
                 n_samples = frame_step * (x_np.shape[0] // frame_step)
@@ -376,6 +376,7 @@ def train_model(cfg, config_file):
                 iter_total += 1
 
                 if iter_ind >= cfg['training']['max_iters']:
+                    finished_training = True
                     break
 
 if __name__ == "__main__":
