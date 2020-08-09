@@ -30,19 +30,30 @@ def pre_emphasis(x, coef=0.97):
     return tf.concat([x[0:1], y], axis=0)
 
 def get_args():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        description='Analysis-synthesis of wave files using GELP'
+    )
     parser.add_argument('--model_dir', type=str,
-                        default='sessions/42')                    
-    parser.add_argument('--input_wav_dir', type=str) 
+                        default='sessions/pretrained',
+                        help="Model base directory")
+    parser.add_argument('--input_wav_dir', type=str,
+                        help="Directory containing .wav files")
+    parser.add_argument('--save_melspec', action='store_true',
+                        help="Set to save mel-spectra in '--model_dir/mel'")
+    parser.add_argument("--suppress_warnings", action='store_true',
+                        help="Set to suppress TensorFlow 2.0 deprecation warnings")
     args = parser.parse_args()
-    return args
 
+    # suppress tensorflow warnings related to 1.X to 2.Y transition 
+    if args.suppress_warnings:
+        tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
+
+    return args
 
 def get_config(filename):
     with open(filename, 'r') as f:
         cfg = json.load(f) 
     return cfg  
-
 
 def copy_synthesis(args):
 
@@ -51,12 +62,14 @@ def copy_synthesis(args):
 
     run_id = cfg['run_id']
 
+    # Neural net config
     residual_channels = cfg['model']['residual_channels']
     postnet_channels = cfg['model']['postnet_channels']
     cond_embed_dim = cfg['model']['cond_embed_dim']
     dilations = cfg['model']['dilations']
     filter_width = cfg['model']['filter_width']
 
+    # Signal processing config
     filter_order = cfg['data']['ar_filter_order']
     num_freq = cfg['data']['num_freq']
     nfft = 2 * (num_freq - 1)
@@ -166,11 +179,14 @@ def copy_synthesis(args):
     model_path = os.path.join(run_root, 'model')
     syn_path = os.path.join(run_root, 'syn')
     exc_path = os.path.join(run_root, 'exc')
+    mel_path = os.path.join(run_root, 'mel')
 
     if not os.path.isdir(syn_path): 
         os.makedirs(syn_path) 
     if not os.path.isdir(exc_path): 
-        os.makedirs(exc_path) 
+        os.makedirs(exc_path)
+    if not os.path.isdir(mel_path) and args.save_melspec:
+        os.makedirs(mel_path) 
 
     with tf.Session() as sess:
         saver = tf.train.Saver()
@@ -181,15 +197,19 @@ def copy_synthesis(args):
             n_samples = frame_step * (x_np.shape[0] // frame_step)
             x_np = x_np[:n_samples]
 
-            x_fake_np, exc_fake_np = sess.run([x_fake_flat, exc_fake_flat],
-                                               feed_dict={x: x_np})
+            x_fake_np, exc_fake_np, mel_np = sess.run(
+                [x_fake_flat, exc_fake_flat, MS],
+                feed_dict={x: x_np})
 
             print(f'Generating {bname}')
             x_fake_np = noise_gate(x_fake_np, threshold=-40, reduction=-15)                                                            
             sf.write(os.path.join(syn_path, '{}.syn.wav'.format(bname)),
                         x_fake_np, sample_rate)
             sf.write(os.path.join(exc_path, '{}.exc.wav'.format(bname)),
-                        exc_fake_np, sample_rate)                                
+                        exc_fake_np, sample_rate)
+            if args.save_melspec:
+                np.savez(os.path.join(mel_path, '{}.npz'.format(bname)),
+                    melspec=mel_np)                                
 
 
 if __name__ == "__main__":
