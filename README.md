@@ -17,7 +17,7 @@ If you find the code useful, please use the following citation
 ```
 @inproceedings{Juvela2019,
   author={Lauri Juvela and Bajibabu Bollepalli and Junichi Yamagishi and Paavo Alku},
-  title={{GELP}: {GAN}-Excited Linear Prediction for Speech Synthesis from Mel-Spectrogram},
+  title={ {GELP}: {GAN}-Excited Linear Prediction for Speech Synthesis from Mel-Spectrogram},
   year=2019,
   booktitle={Proc. Interspeech},
   pages={694--698},
