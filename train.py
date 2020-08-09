@@ -31,7 +31,7 @@ def get_args():
     parser.add_argument("--config", type=str,
                         default="./config/config.json")
     parser.add_argument("--initial_model", type=str,
-                        default="./sessions/42/model/model")
+                        default=None)
     parser.add_argument("--suppress_warnings", action='store_true')
     args = parser.parse_args()
 
@@ -292,10 +292,23 @@ def train_model(cfg, config_file):
             beta1=adam_beta1,
             beta2=adam_beta2).minimize(D_loss_total, var_list=theta_d)
 
+    import ipdb; ipdb.set_trace()
+
     # restore training status (optional)
     training_status_file = os.path.join(model_path, "status.npz")
-    restore = os.path.isfile(training_status_file)
-    if restore:
+    if os.path.isfile(training_status_file):
+        restore_latest_checkpoint = True
+    else:
+        restore_latest_checkpoint = False
+    
+    # train from custom checkpoint (takes priority)
+    if args.initial_model is not None:
+        restore_custom_checkpoint = True
+    else:
+        restore_custom_checkpoint = False
+
+    # continue training from latest checkpoint
+    if restore_latest_checkpoint and not restore_custom_checkpoint:
         status = np.load(training_status_file)
         iter_total = int(status['iter_total']) + 1
         epoch_start = int(status['epoch']) + 1
@@ -310,7 +323,10 @@ def train_model(cfg, config_file):
 
         summary_writer = tf.summary.FileWriter(logs_path, graph=tf.get_default_graph())
         saver = tf.train.Saver()
-        if restore:
+        import ipdb; ipdb.set_trace()
+        if restore_custom_checkpoint:
+            saver.restore(sess, args.initial_model)
+        elif restore_latest_checkpoint:
             saver.restore(sess, tf.train.latest_checkpoint(model_path))
 
         iter_ind = 0
@@ -359,7 +375,7 @@ def train_model(cfg, config_file):
                 iter_ind += 1
                 iter_total += 1
 
-                if iter_ind > cfg['training']['max_iters']:
+                if iter_ind >= cfg['training']['max_iters']:
                     break
 
 if __name__ == "__main__":

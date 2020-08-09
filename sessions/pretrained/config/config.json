@@ -1,6 +1,6 @@
 {
 
-    "run_id" : 42,
+    "run_id" : "pretrained",
 
     "data" : {
         "data_dir" : "../../DATA/nancy16",
