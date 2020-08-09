@@ -1,11 +1,10 @@
 # GELP: GAN-Excited Linear Prediction
 
-This repository contains source code and pre-trained models to reproduce the neural vocoding part in our paper "GELP: GAN-Excited Linear Prediction for Speech Synthesis from Mel-spectrogram
-"
+This repository contains source code and pre-trained models to reproduce the neural vocoding part in our paper "GELP: GAN-Excited Linear Prediction for Speech Synthesis from Mel-spectrogram"
 
 The published version of the paper is freely available at https://www.isca-speech.org/archive/Interspeech_2019/pdfs/2008.pdf
 
-Alternatively, the paper is also lso available at 
+Alternatively, the paper is also available at 
 https://arxiv.org/abs/1904.03976
 
 
@@ -72,7 +71,7 @@ Running synthesis again will create slightly different results, because GELP is 
 
 If you would like to additionally save the mel-spectrogram, add a `--save_melspec` argument to the call and the spectrograms should appear in `sessions/pretrained/mel`. 
 
-Although the mel-spectrogram configuration used here is close to popular Tacotron repositories (such as https://github.com/keithito/tacotron), we have experienced subtle differences causing issues with the signal processing related to mel-inversion and envelope fitting.
+Although the mel-spectrogram configuration used here is close to popular Tacotron repositories (such as https://github.com/keithito/tacotron), we have experienced that subtle differences can cause serious issues with the signal processing related to mel-inversion and envelope fitting.
 
 Partially due to these concerns, we cannot currently provide off-the-shelf usage as a generic mel-spectrum-to-waveform neural vocoder. Nevertheless, it's fairly simple to partition the `generate_copysyn.py` script into an acoustic feature extractor and a vocoder synthesis part. 
 
@@ -83,7 +82,6 @@ Training GAN models can be tedious (even when everything is stable), due to no c
 ### Preparation
 
 For a training toy example, let's use the wave files in `demo_data/wav`. 
-
 First make a list of the wavefiles by calling
 
 ```bash
@@ -108,7 +106,7 @@ Additionally, audio snapshots of generated and ground-truth speech and excitatio
 
 ### Adapting a pre-trained model
 
-Starting with a pre-trained model and swapping the data is probably the best way to go, if there is no need to change the configuration and the goal is just to build a new voice.
+Starting with a pre-trained model and swapping the data is probably the best way to go when there is no need to change the configuration and the goal is to build a new voice.
 
 This can be done by running
 
@@ -121,7 +119,7 @@ python train.py \
 
 ### Training from scratch
 
-Train the model from random initialization with the same script, just omit the `--initial_model` argument. If you'd like to experiment with the configuration, this is required. 
+Train the model from random initialization using the same script, just omit the `--initial_model` argument. If you'd like to experiment with the configuration, this is required. 
 
 ```bash
 python train.py \
