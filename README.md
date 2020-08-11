@@ -147,7 +147,7 @@ No Pain, No GAN. Good Luck!
 
 This section contains explanations of th configuration parateters contaned in `config/config.json`.
 
-`run_id` is the base name for training a run. The id can be a number or a string. 
+`run_id` is the base name for training a run. The id can be a number or a string and it is useful to change for each new experiment.
 ```json
 "run_id" : 1,
 ```  
@@ -180,20 +180,20 @@ Data configuration contains information about the dataset and features, includin
     "num_mels": 80,
     "dct_coefs": null,
 ``` 
-`num_freq` set the number of frequency bins in STFT. For example, 1025 bins corresponds to FFT size of 2048. `frame_length_ms` and `frame_shift_ms` set the STFT frame length and hop size in milliseconds, while `preemphasis` sets the first order differentiator coefficient used in pre-emphasis. 
+`num_freq` set the number of frequency bins in STFT. For example, 1025 bins corresponds to FFT size of 2048. `frame_length_ms` and `frame_shift_ms` set the STFT frame length and hop size in milliseconds, while `preemphasis` sets the first-order differentiator coefficient used in pre-emphasis. 
 ```json
     "num_freq": 1025,
     "frame_length_ms": 25.0,
     "frame_shift_ms": 5.0,
     "preemphasis": 0.97,
 ```  
-`min_level_db` and `ref_level_db` are normalization coefficients used to limit (and clip) the dynamic range of the mel-spectrograms
+`min_level_db` and `ref_level_db` are normalization coefficients used to limit (and clip) the dynamic range of the mel-spectrograms.
 ```json
     "min_level_db": -100,
     "ref_level_db": 20,
 ``` 
 
-`ar_filter_order` determines the order of AR model polynomial. A typical choice for TTS is 30, but we used 24 in the paper for compatibility with our previous work on MFCC synthesis. 
+`ar_filter_order` determines the order of AR model polynomial. A typical choice for text-to-speech is 30, but we used 24 in the paper for compatibility with our previous work on MFCC synthesis. 
 ```json 
     "ar_filter_order": 24
 ```  

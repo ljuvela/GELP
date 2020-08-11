@@ -3,7 +3,7 @@ channels:
   - conda-forge
 dependencies:
   - python=3.7
-  - cudatoolkit-dev=10.0
+  - cudatoolkit-dev=10.2
   - numba=0.48
   - librosa
   - pysoundfile
@@ -11,5 +11,5 @@ dependencies:
   - scipy
   - pip
   - pip:
-    tensorflow-gpu==1.15.0
+    - tensorflow-gpu==1.15.0
     
