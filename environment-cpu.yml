@@ -6,7 +6,7 @@ dependencies:
   - numba=0.48
   - librosa
   - pysoundfile
-  - numpy
+  - numpy=1.17
   - scipy
   - pip
   - pip:
